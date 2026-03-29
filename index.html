@@ -73,11 +73,74 @@
         .view {
             display: none;
         }
-        
+
         .view.active {
             display: block;
         }
-        
+
+        .ai-bot-box {
+            background: #ffffff;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            max-width: 440px;
+            color: #333;
+        }
+
+        .ai-bot-messages {
+            max-height: 160px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background: #f1f1f1;
+            border: 1px solid #bbb;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .ai-bot-message { margin-bottom: 6px; font-size: 13px; line-height: 1.3; }
+        .ai-bot-message.user { color: #00529b; font-weight: 600; }
+        .ai-bot-message.bot { color: #333; }
+
+        .ai-input-row { display: flex; gap: 6px; }
+        .ai-input-row input { flex: 1; padding: 8px; border: 1px solid #999; border-radius: 6px; }
+        .ai-input-row button { padding: 8px 12px; border: 1px solid #333; border-radius: 6px; background: #333; color: white; cursor: pointer; }
+
+        .front-desk {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            max-width: 440px;
+            color: #333;
+        }
+
+        .front-desk input,
+        .front-desk select,
+        .front-desk textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .front-desk button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .front-desk button:hover {
+            background: #5568d3;
+        }
+
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -503,7 +566,27 @@
                 <button class="toggle-btn" onclick="switchView('analytics')">📊 Analytics</button>
             </div>
         </header>
-        
+
+        <div class="ai-bot-box">
+            <div style="font-weight: 700; margin-bottom: 8px;">🤖 Kirana Helper - Ask in simple words</div>
+            <div id="aiBotMessages" class="ai-bot-messages">
+                <div class="ai-bot-message bot">Hi bhaiya! Poochein: rajesh ka bill, suman due, ya payment kaise karein.</div>
+            </div>
+            <div class="ai-input-row">
+                <input id="aiBotInput" type="text" placeholder="Example: Rajesh ka bill kitna hai?" />
+                <button onclick="aiBotSend()">Send</button>
+            </div>
+        </div>
+
+        <div class="front-desk">
+            <h3>🏢 Front Desk</h3>
+            <input id="fdName" type="text" placeholder="Your Name" />
+            <input id="fdPhone" type="text" placeholder="Phone Number" />
+            <input id="fdIssue" type="text" placeholder="Issue (e.g., payment, due, receipt)" />
+            <textarea id="fdNotes" rows="3" placeholder="Notes (optional)"></textarea>
+            <button onclick="frontDeskSubmit()">Submit Request</button>
+        </div>
+
         <!-- KIRANA OWNER VIEW -->
         <div id="kirana-view" class="view active">
             <!-- Header Stats -->
@@ -1028,7 +1111,69 @@
                 notif.remove();
             }, 3000);
         }
-        
+
+        // AI bot functions
+        function aiBotSend() {
+            const inputEl = document.getElementById('aiBotInput');
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            const msgContainer = document.getElementById('aiBotMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'ai-bot-message user';
+            userMsg.textContent = 'You: ' + text;
+            msgContainer.appendChild(userMsg);
+
+            const botReply = aiBotReply(text.toLowerCase());
+            const botMsg = document.createElement('div');
+            botMsg.className = 'ai-bot-message bot';
+            botMsg.textContent = 'Bot: ' + botReply;
+            msgContainer.appendChild(botMsg);
+
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+            inputEl.value = '';
+        }
+
+        function aiBotReply(text) {
+            if (text.includes('rajesh')) {
+                return 'Rajesh & Sons ka udhaar 45,200 hai aur 8 din mein due hai.';
+            }
+            if (text.includes('suman')) {
+                return 'Suman Traders ka udhaar 28,500 hai aur 3 din mein due hai.';
+            }
+            if (text.includes('baki') || text.includes('outstanding') || text.includes('owed')) {
+                return 'Total baki 2,34,500 rupee hai. “Dashboard” mein sari detail dekh lo.';
+            }
+            if (text.includes('bhugtan') || text.includes('payment')) {
+                return 'Payment karne ke liye Record Payment button dabao, supplier aur amount bharo.';
+            }
+            if (text.includes('kya')) {
+                return 'Pooch sakte ho: Rajesh ka bill, Suman due date, ya total paise kitne hain.';
+            }
+            return 'Maaf karo, samajh nahi aaya. Seedhi bhasha mein poochho.';
+        }
+
+        // Front Desk form handling
+        function frontDeskSubmit() {
+            const name = document.getElementById('fdName').value.trim();
+            const phone = document.getElementById('fdPhone').value.trim();
+            const issue = document.getElementById('fdIssue').value.trim();
+            const notes = document.getElementById('fdNotes').value.trim();
+
+            if (!name || !phone || !issue) {
+                alert('Kripya Name, Phone aur Issue sab bharien');
+                return;
+            }
+
+            showNotification(`📥 Front Desk request sent for ${name}.`, 'success');
+            document.getElementById('fdName').value = '';
+            document.getElementById('fdPhone').value = '';
+            document.getElementById('fdIssue').value = '';
+            document.getElementById('fdNotes').value = '';
+
+            console.log('Front desk request', { name, phone, issue, notes });
+        }
+
         // Set today's date as default
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
