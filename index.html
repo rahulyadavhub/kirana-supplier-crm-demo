@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirana Supplier CRM - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .tagline {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .toggle-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .view {
+            display: none;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .metric-label {
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .metric-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .metric-value.danger {
+            color: #e74c3c;
+        }
+        
+        .metric-value.success {
+            color: #27ae60;
+        }
+        
+        .supplier-list {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .supplier-item {
+            padding: 18px;
+            border-bottom: 1px solid #ecf0f1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .supplier-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .supplier-item:last-child {
+            border-bottom: none;
+        }
+        
+        .supplier-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .supplier-contact {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .supplier-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .balance {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .balance.pending {
+            color: #e67e22;
+        }
+        
+        .balance.settled {
+            color: #27ae60;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-due {
+            background: #ffe5e5;
+            color: #c0392b;
+        }
+        
+        .status-ok {
+            background: #e8f8f5;
+            color: #27ae60;
+        }
+        
+        .status-partial {
+            background: #fef5e7;
+            color: #d68910;
+        }
+        
+        .action-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .invoice-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .invoice-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .invoice-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .close-btn {
+            background: #ecf0f1;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        .submit-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 600;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease-out;
+            z-index: 2000;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification.success {
+            border-left: 4px solid #27ae60;
+        }
+        
+        .notification.error {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .notification.info {
+            border-left: 4px solid #667eea;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .simple-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 200px;
+            margin-top: 20px;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 10px 5px;
+            position: relative;
+        }
+        
+        .chart-bar-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        .header-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-box-label {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .stat-box-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .supplier-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            header {
+                margin-bottom: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .view-toggle {
+                flex-direction: column;
+            }
+            
+            .toggle-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏪 Kirana Supplier CRM</h1>
+            <p class="tagline">Digital ledger for supplier credit & payment tracking</p>
+            
+            <div class="view-toggle">
+                <button class="toggle-btn active" onclick="switchView('kirana')">👨‍💼 Kirana Owner View</button>
+                <button class="toggle-btn" onclick="switchView('supplier')">📦 Supplier Portal</button>
+                <button class="toggle-btn" onclick="switchView('analytics')">📊 Analytics</button>
+            </div>
+        </header>
+        
+        <!-- KIRANA OWNER VIEW -->
+        <div id="kirana-view" class="view active">
+            <!-- Header Stats -->
+            <div class="header-stats">
+                <div class="stat-box">
+                    <div class="stat-box-label">Total Suppliers</div>
+                    <div class="stat-box-value">18</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Total Outstanding</div>
+                    <div class="stat-box-value">₹2,34,500</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Due This Week</div>
+                    <div class="stat-box-value">₹68,000</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Avg Payment Days</div>
+                    <div class="stat-box-value">32</div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="action-btn btn-primary" onclick="openModal('addInvoiceModal')">➕ Add Invoice</button>
+                <button class="action-btn btn-primary" onclick="openModal('recordPaymentModal')">💳 Record Payment</button>
+            </div>
+            
+            <!-- Suppliers List -->
+            <div class="supplier-list">
+                <div style="padding: 15px; background: #667eea; color: white; font-weight: 600; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px;">
+                    <div>Supplier Name</div>
+                    <div>Outstanding</div>
+                    <div>Invoices</div>
+                    <div>Status</div>
+                    <div>Action</div>
+                </div>
+                
+                <div class="supplier-item">
+                    <div>
+                        <div class="supplier-name">Suman Traders</div>
+                        <div class="supplier-contact">Wholesale Snacks & Biscuits</div>
+                    </div>
+                    <div class="balance pending">₹28,500</div>
+                    <div>4 invoices</div>
+                    <div><span class="status-badge status-due">Due in 3 days</span></div>
+                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Suman Traders')">View</button></div>
+                </div>
+                
+                <div class="supplier-item">
+                    <div>
+                        <div class="supplier-name">Rajesh & Sons</div>
+                        <div class="supplier-contact">Dairy & Milk Products</div>
+                    </div>
+                    <div class="balance pending">₹45,200</div>
+                    <div>7 invoices</div>
+                    <div><span class="status-badge status-partial">Due in 8 days</span></div>
+                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Rajesh & Sons')">View</button></div>
+                </div>
+                
+                <div class="supplier-item">
+                    <div>
+                        <div class="supplier-name">Delhi Spice Co.</div>
+                        <div class="supplier-contact">Spices & Seasonings</div>
+                    </div>
+                    <div class="balance settled">₹12,800</div>
+                    <div>3 invoices</div>
+                    <div><span class="status-badge status-ok">All settled</span></div>
+                    <div><button class="action-btn btn-secondary" onclick="viewSupplierDetails('Delhi Spice Co.')">View</button></div>
+                </div>
+                
+                <div class="supplier-item">
+                    <div>
+                        <div class="supplier-name">Kumar Wholesale</div>
+                        <div class="supplier-contact">Oils & Ghee</div>
+                    </div>
+                    <div class="balance pending">₹52,000</div>
+                    <div>5 invoices</div>
+                    <div><span class="status-badge status-due">OVERDUE</span></div>
+                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Kumar Wholesale')">View</button></div>
+                </div>
+                
+                <div class="supplier-item">
+                    <div>
+                        <div class="supplier-name">Priya Distributors</div>
+                        <div class="supplier-contact">Beverages & Juices</div>
+                    </div>
+                    <div class="balance pending">₹38,000</div>
+                    <div>6 invoices</div>
+                    <div><span class="status-badge status-partial">Due in 12 days</span></div>
+                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Priya Distributors')">View</button></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SUPPLIER PORTAL -->
+        <div id="supplier-view" class="view">
+            <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h2 style="color: #333; margin-bottom: 15px;">📦 Supplier: Suman Traders</h2>
+                <p style="color: #666; font-size: 14px;">Wholesale Snacks & Biscuits | Contact: 9876543210</p>
+            </div>
+            
+            <!-- Supplier Stats -->
+            <div class="header-stats">
+                <div class="stat-box">
+                    <div class="stat-box-label">Outstanding Balance</div>
+                    <div class="stat-box-value">₹28,500</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Pending Invoices</div>
+                    <div class="stat-box-value">4</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Last Payment</div>
+                    <div class="stat-box-value">18 Mar</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-label">Credit Limit</div>
+                    <div class="stat-box-value">₹50,000</div>
+                </div>
+            </div>
+            
+            <!-- Invoice Details -->
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 15px;">📋 Invoice Details</h3>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Due</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>INV-2024-001</strong></td>
+                            <td>15 Mar 2026</td>
+                            <td>₹8,500</td>
+                            <td><span class="status-badge status-due">Overdue</span></td>
+                            <td>3 days ago</td>
+                        </tr>
+                        <tr>
+                            <td><strong>INV-2024-002</strong></td>
+                            <td>18 Mar 2026</td>
+                            <td>₹9,200</td>
+                            <td><span class="status-badge status-due">Due</span></td>
+                            <td>Tomorrow</td>
+                        </tr>
+                        <tr>
+                            <td><strong>INV-2024-003</strong></td>
+                            <td>20 Mar 2026</td>
+                            <td>₹5,800</td>
+                            <td><span class="status-badge status-partial">Not Due</span></td>
+                            <td>7 days</td>
+                        </tr>
+                        <tr>
+                            <td><strong>INV-2024-004</strong></td>
+                            <td>22 Mar 2026</td>
+                            <td>₹5,000</td>
+                            <td><span class="status-badge status-partial">Not Due</span></td>
+                            <td>9 days</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Payment History -->
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 15px;">💳 Payment History</h3>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>18 Mar 2026</td>
+                            <td>₹15,000</td>
+                            <td>UPI Transfer</td>
+                            <td>TXN#234567</td>
+                        </tr>
+                        <tr>
+                            <td>10 Mar 2026</td>
+                            <td>₹12,500</td>
+                            <td>Bank Transfer</td>
+                            <td>REF#123456</td>
+                        </tr>
+                        <tr>
+                            <td>02 Mar 2026</td>
+                            <td>₹20,000</td>
+                            <td>Cash</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #e8f8f5; border-left: 4px solid #27ae60; border-radius: 6px;">
+                <p style="color: #27ae60; font-weight: 600;">✓ Credit Limit Available: ₹21,500</p>
+                <p style="color: #666; font-size: 13px; margin-top: 5px;">You can still order goods up to this limit</p>
+            </div>
+        </div>
+        
+        <!-- ANALYTICS VIEW -->
+        <div id="analytics-view" class="view">
+            <div class="dashboard">
+                <div class="card">
+                    <h3>💰 Payment Status Breakdown</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: #666;">Settled</span>
+                            <span style="font-weight: bold;">₹1,45,000</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px;">
+                            <div style="width: 62%; height: 100%; background: #27ae60; border-radius: 4px;"></div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 15px;">
+                            <span style="color: #666;">Pending (Due Soon)</span>
+                            <span style="font-weight: bold;">₹68,000</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px;">
+                            <div style="width: 29%; height: 100%; background: #e67e22; border-radius: 4px;"></div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; margin-top: 15px;">
+                            <span style="color: #666;">Overdue</span>
+                            <span style="font-weight: bold;">₹21,500</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: #ecf0f1; border-radius: 4px;">
+                            <div style="width: 9%; height: 100%; background: #e74c3c; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>📈 Top 5 Suppliers by Outstanding</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px;">Kumar Wholesale</span>
+                                <span style="font-weight: bold; color: #667eea;">₹52,000</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 100%; height: 100%; background: #667eea; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px;">Rajesh & Sons</span>
+                                <span style="font-weight: bold; color: #667eea;">₹45,200</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 87%; height: 100%; background: #667eea; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px;">Priya Distributors</span>
+                                <span style="font-weight: bold; color: #667eea;">₹38,000</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 73%; height: 100%; background: #667eea; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px;">Suman Traders</span>
+                                <span style="font-weight: bold; color: #667eea;">₹28,500</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 55%; height: 100%; background: #667eea; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px;">Others (13 suppliers)</span>
+                                <span style="font-weight: bold; color: #667eea;">₹70,800</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 100%; height: 100%; background: #667eea; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>⏰ Payment Timeline</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px; color: #666;">Overdue</span>
+                                <span style="font-weight: bold; color: #e74c3c;">3 suppliers</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px; color: #666;">Due This Week</span>
+                                <span style="font-weight: bold; color: #e67e22;">5 suppliers</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px; color: #666;">Due Next Week</span>
+                                <span style="font-weight: bold; color: #f39c12;">6 suppliers</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-size: 13px; color: #666;">Not Yet Due</span>
+                                <span style="font-weight: bold; color: #27ae60;">4 suppliers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Detailed Charts -->
+            <div class="chart-container">
+                <h3 style="color: #333; margin-bottom: 15px;">📊 Outstanding Balance Trend (Last 30 Days)</h3>
+                <div class="simple-chart">
+                    <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                        <div class="chart-bar" style="height: 60%;"></div>
+                        <div class="chart-bar-label">Day 1</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                        <div class="chart-bar" style="height: 65%;"></div>
+                        <div class="chart-bar-label">Day 10</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                        <div class="chart-bar" style="height: 75%;"></div>
+                        <div class="chart-bar-label">Day 20</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                        <div class="chart-bar" style="height: 85%;"></div>
+                        <div class="chart-bar-label">Day 30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALS -->
+    
+    <!-- Add Invoice Modal -->
+    <div id="addInvoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">➕ Add New Invoice</div>
+            <form onsubmit="handleAddInvoice(event)">
+                <div class="form-group">
+                    <label>Select Supplier</label>
+                    <select id="supplierSelect" required>
+                        <option value="">-- Choose Supplier --</option>
+                        <option value="Suman Traders">Suman Traders</option>
+                        <option value="Rajesh & Sons">Rajesh & Sons</option>
+                        <option value="Delhi Spice Co.">Delhi Spice Co.</option>
+                        <option value="Kumar Wholesale">Kumar Wholesale</option>
+                        <option value="Priya Distributors">Priya Distributors</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Invoice Number</label>
+                    <input type="text" id="invoiceNum" placeholder="e.g., INV-2024-001" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Amount (₹)</label>
+                    <input type="number" id="invoiceAmount" placeholder="e.g., 5000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Invoice Date</label>
+                    <input type="date" id="invoiceDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Due Date</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="invoiceNotes" placeholder="Add any notes..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="close-btn" onclick="closeModal('addInvoiceModal')">Cancel</button>
+                    <button type="submit" class="submit-btn">Add Invoice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Record Payment Modal -->
+    <div id="recordPaymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">💳 Record Payment</div>
+            <form onsubmit="handleRecordPayment(event)">
+                <div class="form-group">
+                    <label>Select Supplier</label>
+                    <select id="paymentSupplier" required>
+                        <option value="">-- Choose Supplier --</option>
+                        <option value="Suman Traders">Suman Traders</option>
+                        <option value="Rajesh & Sons">Rajesh & Sons</option>
+                        <option value="Delhi Spice Co.">Delhi Spice Co.</option>
+                        <option value="Kumar Wholesale">Kumar Wholesale</option>
+                        <option value="Priya Distributors">Priya Distributors</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Amount (₹)</label>
+                    <input type="number" id="paymentAmount" placeholder="e.g., 10000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">-- Select Method --</option>
+                        <option value="UPI">UPI Transfer</option>
+                        <option value="Bank">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reference/Transaction ID</label>
+                    <input type="text" id="paymentRef" placeholder="e.g., TXN#123456">
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Date</label>
+                    <input type="date" id="paymentDate" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="close-btn" onclick="closeModal('recordPaymentModal')">Cancel</button>
+                    <button type="submit" class="submit-btn">Record Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // View Switching
+        function switchView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected view
+            document.getElementById(viewName + '-view').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+        
+        // Form Handlers
+        function handleAddInvoice(e) {
+            e.preventDefault();
+            const supplier = document.getElementById('supplierSelect').value;
+            const amount = document.getElementById('invoiceAmount').value;
+            closeModal('addInvoiceModal');
+            showNotification(`✅ Invoice added for ${supplier} (₹${amount})`, 'success');
+            e.target.reset();
+        }
+        
+        function handleRecordPayment(e) {
+            e.preventDefault();
+            const supplier = document.getElementById('paymentSupplier').value;
+            const amount = document.getElementById('paymentAmount').value;
+            const method = document.getElementById('paymentMethod').value;
+            closeModal('recordPaymentModal');
+            showNotification(`✅ Payment of ₹${amount} recorded for ${supplier} via ${method}`, 'success');
+            e.target.reset();
+        }
+        
+        function viewSupplierDetails(supplierName) {
+            switchView('supplier');
+            showNotification(`📦 Viewing ${supplierName} details`, 'info');
+        }
+        
+        // Notification
+        function showNotification(message, type = 'info') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+        
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                if (!input.value) input.value = today;
+            });
+        });
+    </script>
+</body>
+</html>
