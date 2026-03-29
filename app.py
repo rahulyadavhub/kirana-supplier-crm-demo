@@ -240,20 +240,23 @@ def bot_reply():
             else:
                 reply = "Koi supplier nahi mila."
         
-        elif 'due' in query or 'jaldi' in query:
+        elif 'due' in query or 'jaldi' in query or 'kab' in query or 'deadline' in query:
             c.execute('SELECT name, outstanding, due_date FROM suppliers ORDER BY due_date LIMIT 3')
             rows = c.fetchall()
             if rows:
-                due_list = ', '.join([f"{r[0]} ({r[2]})" for r in rows])
-                reply = f"Sabse jaldi due: {due_list}."
+                due_list = ', '.join([f"{r[0]} (₹{r[1]} due {r[2]})" for r in rows])
+                reply = f"Dhyan se: jaldi due wale suppliers: {due_list}."
             else:
-                reply = "Koi pending nahi."
-        
+                reply = "Abhi sab clear hai, koi urgent due nahi." 
+
+        elif 'kya' in query or 'kaise' in query or 'help' in query:
+            reply = "Poocho simple: 'Rajesh ka bill kitna', 'Suman ka due kab', 'total baki kitna', 'payment record kaise kare'."
+
         else:
-            reply = "Maaf karo, samajh nahi aaya. Pooch: Rajesh ka bill? Suman due? Ya total baki kitna? Ya payment kaise?"
-        
+            reply = "Maaf karo bhaiya, samajhne me thoda dikkat hua. Seedha likho: 'rajesh due', 'total baki', 'kisne payment ki'."
+
         conn.close()
-        
+
         logger.info(f"🤖 Bot reply: {reply}")
         return jsonify({'reply': reply}), 200
     

@@ -25,7 +25,10 @@ function aiBotSend() {
     msgContainer.appendChild(userMsg);
 
     // Call Flask API
-    fetch('http://localhost:5000/api/bot', {
+    // Safe API base: if same origin in future, use relative path
+    const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
+
+    fetch(`${apiBase}/api/bot`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: text })
