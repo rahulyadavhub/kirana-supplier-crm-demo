@@ -88,9 +88,104 @@ function loadSuppliers() {
     .then(res => res.json())
     .then(suppliers => {
         console.log('Suppliers loaded:', suppliers);
-        // Update UI with suppliers
+        
+        const container = document.getElementById('supplierListContainer');
+        container.innerHTML = ''; // Clear existing content
+        
+        if (suppliers.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📦</div><p>No suppliers found</p></div>';
+            return;
+        }
+        
+        suppliers.forEach(supplier => {
+            const item = document.createElement('div');
+            item.className = 'supplier-item';
+            
+            // Calculate status based on due date
+            const today = new Date();
+            const dueDate = new Date(supplier.due_date);
+            const daysDiff = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+            
+            let statusText = '';
+            let statusClass = '';
+            if (supplier.outstanding <= 0) {
+                statusText = 'Settled';
+                statusClass = 'status-ok';
+            } else if (daysDiff < 0) {
+                statusText = 'OVERDUE';
+                statusClass = 'status-due';
+            } else if (daysDiff <= 7) {
+                statusText = `Due in ${daysDiff} days`;
+                statusClass = 'status-due';
+            } else {
+                statusText = `Due in ${daysDiff} days`;
+                statusClass = 'status-partial';
+            }
+            
+            item.innerHTML = `
+                <div>
+                    <div class="supplier-name">${supplier.name}</div>
+                    <div class="supplier-contact">${supplier.description}</div>
+                </div>
+                <div class="balance pending">₹${supplier.outstanding.toLocaleString()}</div>
+                <div>${supplier.description}</div>
+                <div><span class="status-badge ${statusClass}">${statusText}</span></div>
+                <div><button class="action-btn btn-primary" onclick="viewSupplierDetails(${supplier.id})">View</button></div>
+            `;
+            
+            container.appendChild(item);
+        });
     })
-    .catch(err => console.error('Suppliers API error:', err));
+    .catch(err => {
+        console.error('Suppliers API error:', err);
+        const container = document.getElementById('supplierListContainer');
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><p>Error loading suppliers</p></div>';
+    });
+}
+
+// ==================== VIEW SUPPLIER DETAILS ====================
+function viewSupplierDetails(supplierId) {
+    fetch(`http://localhost:5000/api/suppliers/${supplierId}`)
+    .then(res => res.json())
+    .then(supplier => {
+        console.log('Supplier details:', supplier);
+        
+        // Update supplier portal view
+        switchView('supplier');
+        
+        // Update supplier info
+        document.querySelector('#supplier-view h2').textContent = `📦 Supplier: ${supplier.name}`;
+        document.querySelector('#supplier-view p').textContent = `${supplier.description} | Contact: ${supplier.phone}`;
+        
+        // Update stats
+        document.getElementById('supplierOutstanding').textContent = '₹' + supplier.outstanding.toLocaleString();
+        document.getElementById('supplierDueDate').textContent = supplier.due_date;
+        
+        // Update payment history
+        const paymentList = document.getElementById('supplierPaymentHistory');
+        paymentList.innerHTML = '';
+        
+        if (supplier.payments && supplier.payments.length > 0) {
+            supplier.payments.forEach(payment => {
+                const paymentItem = document.createElement('tr');
+                paymentItem.innerHTML = `
+                    <td>${payment.date}</td>
+                    <td>₹${payment.amount.toLocaleString()}</td>
+                    <td>${payment.method}</td>
+                    <td>${payment.ref || 'N/A'}</td>
+                `;
+                paymentList.appendChild(paymentItem);
+            });
+        } else {
+            paymentList.innerHTML = '<tr><td colspan="4" style="text-align: center;">No payments recorded</td></tr>';
+        }
+        
+        showNotification(`Loaded details for ${supplier.name}`, 'info');
+    })
+    .catch(err => {
+        console.error('Supplier details error:', err);
+        showNotification('Error loading supplier details', 'error');
+    });
 }
 
 // ==================== RECORD PAYMENT ====================
@@ -103,6 +198,8 @@ function recordPayment(supplierId, amount, method, reference) {
     .then(res => res.json())
     .then(data => {
         showNotification(data.message, 'success');
+        loadSuppliers(); // Refresh supplier list
+        loadDashboardStats(); // Refresh dashboard
     })
     .catch(err => {
         showNotification('Payment recording failed', 'error');
@@ -116,10 +213,69 @@ function loadDashboardStats() {
     .then(res => res.json())
     .then(data => {
         console.log('Dashboard stats:', data);
+        
         // Update dashboard UI with real data from database
-        // Example: update stat boxes with data.total_outstanding, data.total_suppliers, etc.
+        document.getElementById('totalSuppliers').textContent = data.total_suppliers;
+        document.getElementById('totalOutstanding').textContent = '₹' + data.total_outstanding.toLocaleString();
+        document.getElementById('dueThisWeek').textContent = '₹' + data.due_this_week.toLocaleString();
+        document.getElementById('totalPayments').textContent = data.total_payments;
     })
-    .catch(err => console.error('Dashboard API error:', err));
+    .catch(err => {
+        console.error('Dashboard API error:', err);
+        // Fallback values
+        document.getElementById('totalSuppliers').textContent = 'Error';
+        document.getElementById('totalOutstanding').textContent = 'Error';
+        document.getElementById('dueThisWeek').textContent = 'Error';
+        document.getElementById('totalPayments').textContent = 'Error';
+    });
+}
+
+// ==================== FORM HANDLERS ====================
+
+function handleAddInvoice(e) {
+    e.preventDefault();
+    // For now, just show notification (invoice management not implemented yet)
+    const supplier = document.getElementById('supplierSelect').value;
+    const amount = document.getElementById('invoiceAmount').value;
+    closeModal('addInvoiceModal');
+    showNotification(`✅ Invoice added for ${supplier} (₹${amount})`, 'success');
+    e.target.reset();
+}
+
+function handleRecordPayment(e) {
+    e.preventDefault();
+    
+    // Get form values
+    const supplierSelect = document.getElementById('paymentSupplier');
+    const supplierName = supplierSelect.value;
+    const amount = parseFloat(document.getElementById('paymentAmount').value);
+    const method = document.getElementById('paymentMethod').value;
+    const reference = document.getElementById('paymentRef').value;
+    
+    if (!supplierName || !amount || !method) {
+        showNotification('Please fill all required fields', 'error');
+        return;
+    }
+    
+    // Find supplier ID from name
+    fetch('http://localhost:5000/api/suppliers')
+    .then(res => res.json())
+    .then(suppliers => {
+        const supplier = suppliers.find(s => s.name === supplierName);
+        if (!supplier) {
+            showNotification('Supplier not found', 'error');
+            return;
+        }
+        
+        // Record payment
+        recordPayment(supplier.id, amount, method, reference);
+        closeModal('recordPaymentModal');
+        e.target.reset();
+    })
+    .catch(err => {
+        console.error('Payment supplier lookup error:', err);
+        showNotification('Error processing payment', 'error');
+    });
 }
 
 // Load on page ready

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  kirana-crm:
+    build: .
+    ports:
+      - "8000:8000"  # Frontend
+      - "5000:5000"  # Backend API
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=false
+    volumes:
+      - ./kirana.db:/app/kirana.db  # Persist database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

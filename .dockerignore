@@ -1,0 +1,16 @@
+# Docker ignore file
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+dev-server.log
+.git/
+.gitignore
+README.md
+.env
+kirana-supplier-crm-demo/
+node_modules/
+.venv
+venv/

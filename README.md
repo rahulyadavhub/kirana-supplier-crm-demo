@@ -39,16 +39,70 @@ This starts:
 
 ---
 
-## 📁 Project Structure
+## � Deployment Options
+
+### **Docker (Recommended)**
+```bash
+# Build and run with Docker Compose
+make docker-run
+
+# Or manually:
+docker-compose up --build
+```
+
+### **Heroku**
+```bash
+# Deploy to Heroku
+heroku create your-app-name
+git push heroku main
+```
+
+### **Local Production**
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run production server
+python3 run.py
+```
+
+### **Makefile Commands**
+```bash
+make help        # Show all available commands
+make install     # Install dependencies
+make dev         # Run development server
+make run         # Run production server
+make build       # Build Docker image
+make docker-run  # Run with Docker Compose
+make clean       # Clean up generated files
+make test        # Run health checks
+make db-reset    # Reset database
+make logs        # Show dev server logs
+```
+
+---
+
+## 📁 Complete Project Structure
 
 ```
 ├── index.html              # Main UI (kirana dashboard)
 ├── app.py                  # Flask backend with API endpoints
 ├── dev-server.py           # Development server manager (hot reload)
+├── run.py                  # Production entry point
 ├── api-client.js           # Frontend API wrapper
+├── requirements.txt        # Python dependencies
+├── Dockerfile              # Docker container config
+├── docker-compose.yml      # Docker Compose setup
+├── Procfile                # Heroku deployment
+├── runtime.txt             # Python version for Heroku
+├── Makefile                # Build automation
 ├── .env                    # Environment configuration
+├── .env.example            # Environment template
+├── .gitignore              # Git ignore rules
+├── .dockerignore           # Docker ignore rules
 ├── kirana.db              # SQLite database (auto-created)
-└── requirements.txt        # Python dependencies
+├── README.md               # This file
+└── LICENSE                 # MIT License
 ```
 
 ---
