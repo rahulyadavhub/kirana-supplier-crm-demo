@@ -1048,30 +1048,8 @@
         // Notification
         // Notification - Now handled by api-client.js
 
-        // AI bot functions
-        // AI bot functions - Now handled by api-client.js
-
-        function aiBotReply(text) {
-            if (text.includes('rajesh')) {
-                return 'Rajesh & Sons ka udhaar 45,200 hai aur 8 din mein due hai.';
-            }
-            if (text.includes('suman')) {
-                return 'Suman Traders ka udhaar 28,500 hai aur 3 din mein due hai.';
-            }
-            if (text.includes('baki') || text.includes('outstanding') || text.includes('owed')) {
-                return 'Total baki 2,34,500 rupee hai. “Dashboard” mein sari detail dekh lo.';
-            }
-            if (text.includes('bhugtan') || text.includes('payment')) {
-                return 'Payment karne ke liye Record Payment button dabao, supplier aur amount bharo.';
-            }
-            if (text.includes('kya')) {
-                return 'Pooch sakte ho: Rajesh ka bill, Suman due date, ya total paise kitne hain.';
-            }
-            return 'Maaf karo, samajh nahi aaya. Seedhi bhasha mein poochho.';
-        }
-
-        // Front Desk form handling
-        // Front Desk form handling - Now handled by api-client.js
+        // AI and front desk logic is handled by api-client.js for clean separation.
+        // (Legacy local function removed, API-driven flow is active.)
 
         // Set today's date as default - Now handled by api-client.js
     <script src="api-client.js"></script>
