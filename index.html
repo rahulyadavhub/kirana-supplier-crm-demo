@@ -13,7 +13,8 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
+            color: #000000;
             min-height: 100vh;
             padding: 20px;
         }
@@ -24,7 +25,8 @@
         }
         
         header {
-            background: white;
+            background: #000000;
+            color: #ffffff;
             padding: 20px;
             border-radius: 12px;
             margin-bottom: 30px;
@@ -32,7 +34,7 @@
         }
         
         h1 {
-            color: #667eea;
+            color: #ffffff;
             margin-bottom: 10px;
             font-size: 28px;
         }
@@ -51,9 +53,9 @@
         
         .toggle-btn {
             padding: 10px 20px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
+            border: 2px solid #000000;
+            background: #ffffff;
+            color: #000000;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
@@ -61,13 +63,13 @@
         }
         
         .toggle-btn.active {
-            background: #667eea;
-            color: white;
+            background: #000000;
+            color: #ffffff;
         }
         
         .toggle-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
         
         .view {
@@ -129,16 +131,17 @@
 
         .front-desk button {
             padding: 10px 16px;
-            border: none;
+            border: 2px solid #000000;
             border-radius: 6px;
-            background: #667eea;
-            color: white;
+            background: #000000;
+            color: #ffffff;
             font-weight: bold;
             cursor: pointer;
         }
 
         .front-desk button:hover {
-            background: #5568d3;
+            background: #ffffff;
+            color: #000000;
         }
 
         .dashboard {
@@ -149,7 +152,8 @@
         }
         
         .card {
-            background: white;
+            background: #ffffff;
+            border: 2px solid #000000;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -162,10 +166,10 @@
         }
         
         .card h3 {
-            color: #333;
+            color: #000000;
             margin-bottom: 15px;
             font-size: 16px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #000000;
             padding-bottom: 10px;
         }
         
@@ -187,7 +191,7 @@
         .metric-value {
             font-size: 20px;
             font-weight: bold;
-            color: #667eea;
+            color: #000000;
         }
         
         .metric-value.danger {
@@ -286,12 +290,14 @@
         }
         
         .btn-primary {
-            background: #667eea;
-            color: white;
+            background: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
         }
         
         .btn-primary:hover {
-            background: #5568d3;
+            background: #ffffff;
+            color: #000000;
         }
         
         .btn-secondary {
@@ -310,8 +316,8 @@
         }
         
         .invoice-table th {
-            background: #667eea;
-            color: white;
+            background: #000000;
+            color: #ffffff;
             padding: 12px;
             text-align: left;
             font-weight: 600;
@@ -407,9 +413,9 @@
         }
         
         .submit-btn {
-            background: #667eea;
-            color: white;
-            border: none;
+            background: #000000;
+            color: #ffffff;
+            border: 2px solid #000000;
             padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
@@ -473,12 +479,12 @@
         
         .chart-bar {
             flex: 1;
-            background: linear-gradient(to top, #667eea, #764ba2);
+            background: #000000;
             border-radius: 8px 8px 0 0;
             display: flex;
             align-items: flex-end;
             justify-content: center;
-            color: white;
+            color: #ffffff;
             font-weight: bold;
             font-size: 12px;
             padding: 10px 5px;
@@ -501,8 +507,8 @@
         }
         
         .stat-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #000000;
+            color: #ffffff;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
@@ -594,19 +600,19 @@
             <div class="header-stats">
                 <div class="stat-box">
                     <div class="stat-box-label">Total Suppliers</div>
-                    <div class="stat-box-value">18</div>
+                    <div class="stat-box-value" id="totalSuppliers">Loading...</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-box-label">Total Outstanding</div>
-                    <div class="stat-box-value">₹2,34,500</div>
+                    <div class="stat-box-value" id="totalOutstanding">Loading...</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-box-label">Due This Week</div>
-                    <div class="stat-box-value">₹68,000</div>
+                    <div class="stat-box-value" id="dueThisWeek">Loading...</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-box-label">Avg Payment Days</div>
-                    <div class="stat-box-value">32</div>
+                    <div class="stat-box-label">Total Payments</div>
+                    <div class="stat-box-value" id="totalPayments">Loading...</div>
                 </div>
             </div>
             
@@ -618,67 +624,16 @@
             
             <!-- Suppliers List -->
             <div class="supplier-list">
-                <div style="padding: 15px; background: #667eea; color: white; font-weight: 600; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px;">
+                <div style="padding: 15px; background: #000000; color: #ffffff; font-weight: 600; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 15px;">
                     <div>Supplier Name</div>
                     <div>Outstanding</div>
-                    <div>Invoices</div>
-                    <div>Status</div>
+                    <div>Description</div>
+                    <div>Due Date</div>
                     <div>Action</div>
                 </div>
                 
-                <div class="supplier-item">
-                    <div>
-                        <div class="supplier-name">Suman Traders</div>
-                        <div class="supplier-contact">Wholesale Snacks & Biscuits</div>
-                    </div>
-                    <div class="balance pending">₹28,500</div>
-                    <div>4 invoices</div>
-                    <div><span class="status-badge status-due">Due in 3 days</span></div>
-                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Suman Traders')">View</button></div>
-                </div>
-                
-                <div class="supplier-item">
-                    <div>
-                        <div class="supplier-name">Rajesh & Sons</div>
-                        <div class="supplier-contact">Dairy & Milk Products</div>
-                    </div>
-                    <div class="balance pending">₹45,200</div>
-                    <div>7 invoices</div>
-                    <div><span class="status-badge status-partial">Due in 8 days</span></div>
-                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Rajesh & Sons')">View</button></div>
-                </div>
-                
-                <div class="supplier-item">
-                    <div>
-                        <div class="supplier-name">Delhi Spice Co.</div>
-                        <div class="supplier-contact">Spices & Seasonings</div>
-                    </div>
-                    <div class="balance settled">₹12,800</div>
-                    <div>3 invoices</div>
-                    <div><span class="status-badge status-ok">All settled</span></div>
-                    <div><button class="action-btn btn-secondary" onclick="viewSupplierDetails('Delhi Spice Co.')">View</button></div>
-                </div>
-                
-                <div class="supplier-item">
-                    <div>
-                        <div class="supplier-name">Kumar Wholesale</div>
-                        <div class="supplier-contact">Oils & Ghee</div>
-                    </div>
-                    <div class="balance pending">₹52,000</div>
-                    <div>5 invoices</div>
-                    <div><span class="status-badge status-due">OVERDUE</span></div>
-                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Kumar Wholesale')">View</button></div>
-                </div>
-                
-                <div class="supplier-item">
-                    <div>
-                        <div class="supplier-name">Priya Distributors</div>
-                        <div class="supplier-contact">Beverages & Juices</div>
-                    </div>
-                    <div class="balance pending">₹38,000</div>
-                    <div>6 invoices</div>
-                    <div><span class="status-badge status-partial">Due in 12 days</span></div>
-                    <div><button class="action-btn btn-primary" onclick="viewSupplierDetails('Priya Distributors')">View</button></div>
+                <div id="supplierListContainer">
+                    <!-- Suppliers will be loaded here by JavaScript -->
                 </div>
             </div>
         </div>
@@ -1086,54 +1041,15 @@
             e.target.reset();
         }
         
-        function handleRecordPayment(e) {
-            e.preventDefault();
-            const supplier = document.getElementById('paymentSupplier').value;
-            const amount = document.getElementById('paymentAmount').value;
-            const method = document.getElementById('paymentMethod').value;
-            closeModal('recordPaymentModal');
-            showNotification(`✅ Payment of ₹${amount} recorded for ${supplier} via ${method}`, 'success');
-            e.target.reset();
-        }
+        // Payment handling - Now handled by api-client.js
         
-        function viewSupplierDetails(supplierName) {
-            switchView('supplier');
-            showNotification(`📦 Viewing ${supplierName} details`, 'info');
-        }
+        // Supplier details - Now handled by api-client.js
         
         // Notification
-        function showNotification(message, type = 'info') {
-            const notif = document.createElement('div');
-            notif.className = `notification ${type}`;
-            notif.textContent = message;
-            document.body.appendChild(notif);
-            
-            setTimeout(() => {
-                notif.remove();
-            }, 3000);
-        }
+        // Notification - Now handled by api-client.js
 
         // AI bot functions
-        function aiBotSend() {
-            const inputEl = document.getElementById('aiBotInput');
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            const msgContainer = document.getElementById('aiBotMessages');
-            const userMsg = document.createElement('div');
-            userMsg.className = 'ai-bot-message user';
-            userMsg.textContent = 'You: ' + text;
-            msgContainer.appendChild(userMsg);
-
-            const botReply = aiBotReply(text.toLowerCase());
-            const botMsg = document.createElement('div');
-            botMsg.className = 'ai-bot-message bot';
-            botMsg.textContent = 'Bot: ' + botReply;
-            msgContainer.appendChild(botMsg);
-
-            msgContainer.scrollTop = msgContainer.scrollHeight;
-            inputEl.value = '';
-        }
+        // AI bot functions - Now handled by api-client.js
 
         function aiBotReply(text) {
             if (text.includes('rajesh')) {
@@ -1155,34 +1071,9 @@
         }
 
         // Front Desk form handling
-        function frontDeskSubmit() {
-            const name = document.getElementById('fdName').value.trim();
-            const phone = document.getElementById('fdPhone').value.trim();
-            const issue = document.getElementById('fdIssue').value.trim();
-            const notes = document.getElementById('fdNotes').value.trim();
+        // Front Desk form handling - Now handled by api-client.js
 
-            if (!name || !phone || !issue) {
-                alert('Kripya Name, Phone aur Issue sab bharien');
-                return;
-            }
-
-            showNotification(`📥 Front Desk request sent for ${name}.`, 'success');
-            document.getElementById('fdName').value = '';
-            document.getElementById('fdPhone').value = '';
-            document.getElementById('fdIssue').value = '';
-            document.getElementById('fdNotes').value = '';
-
-            console.log('Front desk request', { name, phone, issue, notes });
-        }
-
-        // Set today's date as default
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            const dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(input => {
-                if (!input.value) input.value = today;
-            });
-        });
-    </script>
+        // Set today's date as default - Now handled by api-client.js
+    <script src="api-client.js"></script>
 </body>
 </html>
