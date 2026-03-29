@@ -28,7 +28,9 @@ clean: ## Clean up generated files
 	rm -f dev-server.log
 	rm -f kirana.db
 
-test: ## Run basic health check
+test: ## Run unit tests and health check
+	@echo "Running pytest..."
+	@pytest -q
 	@echo "Testing backend health..."
 	@curl -s http://localhost:5000/health | jq . || echo "Backend not running"
 	@echo "Testing frontend..."
